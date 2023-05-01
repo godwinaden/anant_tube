@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row"
+	style="margin: -25px !important; overflow: hidden !important;">
+    <div class="col w-25 p-4" style="max-width: 500px !important; margin-left: 15px !important;">
+      	<div class="text-center mt-3">
+			<a class="text-danger navbar-brand fs-4 mb-5" href="/">
+				<img class="mb-2" src="{{ url_for('assets', path='logo.png') }}" width="40" alt="Anant"/>
+				AnantTube
+			</a>
+			<h1>Logout</h1>
+
+			{% include 'snippets/form_errors.html' %}
+
+			{% if not request.user.is_authenticated %}
+				<p>Login Required. Please go <a href='/login'>here to login</a>.</p>
+			{% else %}
+				<form method='POST' class="d-grid gap-2" style="text-align: left !important;">
+					<p>Would you like to logout?</p>
+    				<button class='btn btn-block btn-primary mt-2' type='submit' >Yes, logout. </button>
+
+				</form>
+			{% endif %}
+		</div>
+    </div>
+	<div class="col w-75 visible-md" style="padding-right: 0px !important;">
+		<img class="w-100" src="{{ url_for('assets', path='watch.jpg') }}" alt="AnantTube"
+		style="object-fit: cover; height: 95vh" />
+    </div>
+  </div>
+{% endblock %}

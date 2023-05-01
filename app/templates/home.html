@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome | {{ super() }} {% endblock %}
+
+
+{% block content %}
+
+	<div class="d-flex flex-row justify-content-center align-items-start p-3 flex-wrap">
+		{% for object in videos %}
+			<div class="card m-4" style="width:320px;">
+				<iframe class="card-img-top" width="320" height="170" src="https://www.youtube.com/embed/{{ object.host_id }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+				<div class="card-body">
+					 {% if object.title and object.title|length >= 20 %}<h6 class="card-title">{{ object.title[0:17] + "..." }}</h6>{% endif %}
+					 {% if object.title and object.title|length < 20 %}<h6 class="card-title">{{ object.title }}</h6>{% endif %}
+					<a href="{{ object.path }}" class="btn btn-primary">Watch</a>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+

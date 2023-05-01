@@ -26,13 +26,16 @@ from .users.schemas import (
     UserSignupSchema
 )
 from .videos.models import Video
+from .playlists.models import Playlist
 from .videos.routers import router as video_router
 
 from .watch_events.models import WatchEvent
 from .watch_events.routers import router as watch_event_router
+from fastapi.staticfiles import StaticFiles
 
 DB_SESSION = None
 BASE_DIR = pathlib.Path(__file__).resolve().parent # app/
+assets_path = BASE_DIR / "templates" / "assets"
 
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
@@ -43,6 +46,7 @@ app.include_router(watch_event_router)
 
 from .handlers import *
 
+app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
 @app.on_event("startup")
 def on_startup():
@@ -52,13 +56,18 @@ def on_startup():
     sync_table(User)
     sync_table(Video)
     sync_table(WatchEvent)
+    sync_table(Playlist)
 
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request):
     if request.user.is_authenticated:
         return render(request, "dashboard.html", {}, status_code=200)
-    return render(request, "home.html", {})
+    q = Video.objects.all().limit(60)
+    context = {
+        "videos": q
+    }
+    return render(request, "home.html", context)
 
 
 @app.get("/account", response_class=HTMLResponse)
@@ -99,7 +108,7 @@ def login_post_view(request: Request,
 @app.get("/logout", response_class=HTMLResponse)
 def logout_get_view(request: Request):
     if not request.user.is_authenticated:
-        return redirect('/login')
+            return redirect('/login')
     return render(request, "auth/logout.html", {})
 
 @app.post("/logout", response_class=HTMLResponse)
